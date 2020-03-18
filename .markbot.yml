@@ -1,5 +1,5 @@
-repo: ''
-canvasCourse: ''
+repo: "working-with-jquery"
+canvasCourse: javascript
 
 naming: true
 restrictFileTypes: true
@@ -11,72 +11,116 @@ git:
   allSynced: true
 
 html:
-  - path: 'index.html'
+  - path: "index.html"
     valid: true
     bestPractices: true
     outline: true
-    performance: true
     has:
-      - ['link[href*="Merriweather"]', 'The Google Font, `Merriweather` (regular, italic & bold) is missing']
-      - ''
-    hasNot:
-      - ''
-    search:
-      - ''
-    searchNot:
-      - ''
+      - 'script[src*="jquery"]'
+      - 'script[src="js/dinos.js"]'
+      - 'script[src="js/main.js"]'
+      - [
+          'script[src*="jquery"] + script[src="js/dinos.js"] + script[src="js/main.js"]',
+          "The order of the Javascript files is really important—it should be: `jqeury`, `dinos.js` then `main.js`",
+        ]
+      - "h1"
+      - "ul"
+      - "h2"
 
 css:
-  - path: 'css/main.css'
+  - path: "css/main.css"
     valid: true
     bestPractices: true
     has:
-      - ['html', 'box-sizing', 'border-box', 'The `border-box` layout model is needed for this assignment—use the `borderbox` snippet']
-      - ['html', 'text-size-adjust', '100%']
-      - ['html', '-moz-text-size-adjust', '100%']
-      - ['html', '-ms-text-size-adjust', '100%']
-      - ['html', '-webkit-text-size-adjust', '100%']
-      - ['*', 'box-sizing', 'inherit', 'The `border-box` layout model is needed for this assignment—use the `borderbox` snippet']
-      - ['@25em']
-      - ['@38em', 'html', 'font-size', '110%']
-      - ['@38em', 'html', 'line-height', '1.4']
-      - ['@60em', 'html', 'font-size', '120%']
-      - ['@60em', 'html', 'line-height', '1.5']
-      - ['@90em', 'html', 'font-size', '130%']
-    hasNot:
-      - []
-    search:
-      - '@-moz-viewport'
-      - '@-ms-viewport'
-      - '@-o-viewport'
-      - '@-webkit-viewport'
-      - '@viewport'
-    searchNot:
-      - ['@media.+\(.*max-width', 'Media queries with `max-width` should not be used — use `min-width` instead']
-      - ['@media.+\(.*px', 'Pixel units should not be used in media queries — use `em` instead']
-      - ['font-size\s*:\s*.+px', 'Pixel units should not be used for `font-size` — use `rem` instead']
+      - [
+          "html",
+          "box-sizing",
+          "border-box",
+          "The `border-box` layout model is needed for this assignment—use the `borderbox` snippet",
+        ]
+      - [
+          "*",
+          "box-sizing",
+          "inherit",
+          "The `border-box` layout model is needed for this assignment—use the `borderbox` snippet",
+        ]
+      - ["html", "font"]
+      - [".dino-list", "margin", 0]
+      - [".dino-list", "padding", 0]
+      - [".dino-list", "list-style-type", "none"]
+      - [".dino-list li", "margin-bottom"]
+      - [".dino-list figure", "margin", 0]
+      - [".dino-list img", "width"]
 
 js:
-  - path: 'js/main.js'
+  - path: "js/main.js"
     valid: true
     bestPractices: true
     search:
-      - ''
+      - "var \\$h1 = \\$\\('h1'\\)"
+      - "var \\$ul = \\$\\('ul'\\)"
+      - 'Dinosaurs\!'
+      - '\.addClass\('
+      - '\.remove\('
+      - 'dinos\.forEach\(function \(dino\) \{'
+      - "\\$\\('<li>'\\)"
+      - "\\$\\('<figure>'\\)"
+      - "\\$\\('<img>'\\)"
+      - "\\$\\('<figcaption>'\\)"
+      - '\.html\('
+      - '\.attr\('
+      - '\.append\('
     searchNot:
-      - ''
+      - "document.write"
+  - path: "js/dinos.js"
+    valid: true
+    bestPractices: true
+    search:
+      - 'var dinos = \['
+      - 'name\:'
+      - 'img\:'
+      - "Diplodocus"
+      - "Hadrosaur"
+      - "Iguanodon"
+      - 'diplodocus\.jpg'
+      - 'hadrosaur\.jpg'
+      - 'iguanodon\.jpg'
+      - '\];'
 
 screenshots:
-  - path: 'index.html'
-    sizes: [320, 400, 608, 960, 1440]
+  - path: "index.html"
+    sizes: [320]
 
 functionality:
-  - path: 'index.html'
+  - path: "index.html"
     tests:
       - |
-        let link = $('nav a');
-        let oldBg = css(link).backgroundColor;
+        const h1 = $('h1');
+        const lis = $$('li');
+        const imgs = $$('img');
+        const expectedLiText = [
+          'Diplodocus',
+          'Hadrosaur',
+          'Iguanodon',
+        ];
+        let liTextValid = true;
 
-        hover('nav a', function () {
-          if (css(link).backgroundColor == oldBg) fail('The background colour of the navigation links don’t change when hovered')
-          pass();
+        if (h1.textContent.trim() != 'Dinosaurs!') fail('The text added into the `<h1>` tag doesn’t match what’s expected');
+        if (imgs.length !== 3) fail('3 images were not written to the page');
+
+        lis.forEach(function (li, i) {
+          if (li.textContent.trim() !== expectedLiText[i]) liTextValid = false;
         });
+
+        if (!liTextValid) fail('The dinosaur names underneath each image are incorrect or in the wrong order');
+
+        pass();
+      - |
+        if (!dinos) fail('The `dinos` variable doesn’t exist');
+        if (dinos.constructor !== Array) fail('The `dinos` variable isn’t an array');
+        if (dinos.length !== 3) fail('There aren’t the correct number of dinosaurs in the `dinos` variable');
+        if (typeof dinos[1] !== 'object') fail('Each dinosaur inside the `dinos` variable isn’t an object')
+        if (dinos[1].name !== 'Hadrosaur') fail('The second dinosaur’s name doesn’t match “Hadrosaur”')
+        if (dinos[1].img !== 'hadrosaur.jpg') fail('The second dinosaur’s image doesn’t match “hadrosaur.jpg”')
+
+        pass();
